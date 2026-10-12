@@ -1,9 +1,0 @@
-# Offline test harness — see TESTING.md. Its own workspace (excluded from the root one).
-[workspace]
-members = ["hound", "shim"]
-resolver = "2"
-
-[profile.dev]
-opt-level = 3
-[profile.test]
-opt-level = 3
