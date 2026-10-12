@@ -1,0 +1,53 @@
+# XcodeGen spec — `xcodegen generate` (run by scripts/build-ios.sh) writes ios/Iki.xcodeproj.
+name: Iki
+options:
+  bundleIdPrefix: org.iki
+  deploymentTarget:
+    iOS: "15.0"          # iPhone 7 tops out at iOS 15.8
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.5"
+    TARGETED_DEVICE_FAMILY: "1"          # iPhone only
+    CODE_SIGN_STYLE: Automatic
+    # Set your team id once in Xcode (Signing & Capabilities) or pass DEVELOPMENT_TEAM=XXXXXXXXXX
+    DEVELOPMENT_TEAM: ""
+targets:
+  Iki:
+    type: application
+    platform: iOS
+    supportedDestinations: [iOS]
+    sources:
+      - path: Iki
+    dependencies:
+      - framework: ../target/ios/IkiCore.xcframework
+        embed: false
+        link: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: org.iki.shakuhachi.ios
+        PRODUCT_NAME: Iki
+        MARKETING_VERSION: "0.2.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_OBJC_BRIDGING_HEADER: Iki/Iki-Bridging-Header.h
+        HEADER_SEARCH_PATHS: ["$(SRCROOT)/../crates/iki-ios/include"]
+        ENABLE_BITCODE: NO
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        SUPPORTS_MACCATALYST: NO
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
+        SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD: NO
+        SDKROOT: iphoneos
+        OTHER_LDFLAGS: ["-lc++"]
+    info:
+      path: Iki/Info.plist
+      properties:
+        CFBundleDisplayName: Iki
+        LSApplicationCategoryType: public.app-category.music
+        UILaunchScreen: {}
+        UIRequiresFullScreen: true
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UIBackgroundModes: [audio]
+        NSMicrophoneUsageDescription: Not used; required by the audio session API.
+        UIFileSharingEnabled: true            # Presets show up in Files → On My iPhone → Iki
+        LSSupportsOpeningDocumentsInPlace: true
+        ITSAppUsesNonExemptEncryption: false

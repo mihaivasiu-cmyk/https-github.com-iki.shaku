@@ -1,0 +1,18 @@
+[package]
+name = "iki-desktop"
+description = "Iki — a playable 1.8 shakuhachi: native desktop front panel (egui)"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "iki"
+path = "src/main.rs"
+
+[dependencies]
+iki-core = { path = "../iki-core" }
+iki-ui = { path = "../iki-ui" }
+eframe = { version = "0.33", default-features = false, features = ["default_fonts", "glow", "wayland", "x11"] }
+midir = "0.11"
+hound = "3.5"

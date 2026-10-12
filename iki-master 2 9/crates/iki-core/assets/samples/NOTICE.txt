@@ -1,0 +1,14 @@
+Flute sample bank (ro … hi, *_chu, *_dai)
+=========================================
+Source: the "Shakuhachi" sample pack by Samplephonics (Sustained folder, take 03),
+cut to 4 s, levelled and re-encoded by tools/sample-import/build_sp_bank.py.
+
+Licence: Samplephonics sells its products royalty-free for use *in a production*
+(music, film, TV, web or other media). Its Terms and Conditions forbid
+re-selling or distributing the products "in their original format". Embedding
+the samples in a released instrument may fall outside that grant: get written
+permission from Samplephonics (or replace the bank with your own recordings)
+before distributing a build that contains these files.
+
+Previous banks are kept in assets/samples_riley (Riley Lee signature tune) and
+assets/samples_nbm (NBM158 phrases); neither is cleared for release either.

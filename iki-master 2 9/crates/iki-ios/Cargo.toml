@@ -1,0 +1,15 @@
+[package]
+name = "iki-ios"
+description = "C ABI between the Iki kernel (iki-core) and the native iOS front end (SwiftUI)"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[lib]
+name = "iki_ios"
+crate-type = ["staticlib", "rlib"]
+
+[dependencies]
+# No cpal: on iOS the app owns the audio callback (AVAudioEngine) and calls `iki_render`.
+iki-core = { path = "../iki-core", default-features = false }

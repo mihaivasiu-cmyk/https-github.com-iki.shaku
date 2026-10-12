@@ -1,0 +1,26 @@
+Copyright (c) 2026 Mihai Vasiu and Denes Tornyi. All rights reserved.
+
+This software, including its source code, binaries, assets and documentation
+(the "Software"), is the private and proprietary property of Mihai Vasiu and
+Denes Tornyi (the "Owners").
+
+No license or other right is granted to any person to use, copy, modify,
+merge, publish, distribute, sublicense, sell, or otherwise exploit the
+Software, in whole or in part, except with the prior written permission of
+both Owners.
+
+Third-party components included with or used by the Software remain subject
+to their own licenses. In particular:
+
+  - The iki-plugin crate (crates/iki-plugin) and the plugin binaries built
+    from it depend on nih-plug's VST3 bindings and are licensed under the
+    GNU General Public License, version 3 or later.
+  - The Noto Sans JP font subset is licensed under the SIL Open Font License
+    (crates/iki-ui/assets/fonts/OFL-NotoSansJP.txt).
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+OWNERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

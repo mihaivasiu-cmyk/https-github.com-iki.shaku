@@ -1,0 +1,108 @@
+# Build the desktop app for Linux and macOS on every push and pull request.
+# Each run's binaries are attached to it as artifacts (Actions → the run →
+# Artifacts): iki-linux-x86_64 and iki-macos-universal.
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+# A newer push to the same branch cancels the older, still-running build.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ALSA headers
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libasound2-dev pkg-config
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Format
+        run: cargo fmt --all --check
+      - name: Lint
+        # Advisory until the existing code is clippy-clean; flip to blocking after.
+        continue-on-error: true
+        run: cargo clippy -p iki-core -p iki-ui -p iki-desktop --all-targets -- -D warnings
+      - name: Test
+        run: cargo test --release -p iki-core -p iki-ui -p iki-desktop
+      - name: Offline kernel tests (same suite, no network / device)
+        run: scripts/offline-check.sh
+      - name: Sample importer tests
+        run: sudo apt-get install -y --no-install-recommends ffmpeg python3-numpy && python3 tools/sample-import/test_import.py
+      - name: Build
+        run: cargo build --release -p iki-desktop
+      - name: Package
+        # tar keeps the executable bit, which artifact uploads drop.
+        run: tar -czf iki-linux-x86_64.tar.gz -C target/release iki
+      - uses: actions/upload-artifact@v4
+        with:
+          name: iki-linux-x86_64
+          path: iki-linux-x86_64.tar.gz
+          retention-days: 14
+
+  # The host-automation plugin and the Android bridge crate share the kernel;
+  # their own tests (parameter table, realtime safety, voice switching) run here.
+  plugin-and-android-core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ALSA / GUI headers
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libasound2-dev pkg-config libx11-dev libxcb1-dev libgl1-mesa-dev libxkbcommon-dev
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Test plugin + Android bridge (host side)
+        run: cargo test --release -p iki-plugin -p iki-android
+
+  # Cross-built on Linux with scripts/build-macos.sh, like dist/ is made
+  # locally: Linux runner minutes cost about a tenth of macOS ones.
+  macos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+      - uses: Swatinem/rust-cache@v2
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: 0.16.0
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-zigbuild
+      - name: Install rcodesign
+        run: |
+          v=0.29.0
+          curl -fsSL "https://github.com/indygreg/apple-platform-rs/releases/download/apple-codesign%2F$v/apple-codesign-$v-x86_64-unknown-linux-musl.tar.gz" |
+            tar -xz --strip-components=1 -C "$HOME/.cargo/bin" "apple-codesign-$v-x86_64-unknown-linux-musl/rcodesign"
+          rcodesign --version
+      - name: Cache macOS SDK
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/iki
+          key: macos-sdk-26.1
+      - name: Build Iki.app (Apple Silicon + Intel)
+        run: scripts/build-macos.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: iki-macos-universal
+          path: dist/Iki-macos-universal.zip
+          retention-days: 14
+
+  ios:
+    # Builds the iOS kernel + Xcode project and compiles the app for the simulator (no signing).
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: scripts/build-ios.sh
+      - run: >
+          xcodebuild -project ios/Iki.xcodeproj -scheme Iki -configuration Release
+          -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build

@@ -1,0 +1,25 @@
+[package]
+name = "iki-core"
+description = "Iki sound kernel: DSP, engine, looper, MIDI parsing, audio I/O and the UI-agnostic instrument controller"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[features]
+default = ["device"]
+# Open audio devices with cpal (desktop, Android fallback). Plugins leave it out:
+# their host owns the audio thread (see `audio::external`).
+device = ["dep:cpal"]
+
+[dependencies]
+# `pulseaudio`: talk to PipeWire (pipewire-pulse) / PulseAudio directly on Linux; falls back to ALSA.
+# macOS: CoreAudio. Android: our own AAudio stream first (see below), cpal as fallback.
+cpal = { version = "0.18", features = ["pulseaudio"], optional = true }
+hound = "3.5"
+rtrb = "0.3"
+rustfft = "6"
+
+[target.'cfg(target_os = "android")'.dependencies]
+# Native AAudio output (src/audio/aaudio.rs) — the same ndk crate cpal uses there.
+ndk = { version = "0.9", default-features = false, features = ["audio"] }

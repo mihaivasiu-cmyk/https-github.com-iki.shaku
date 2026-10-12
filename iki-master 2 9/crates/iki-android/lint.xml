@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- The custom controls are only ever created from code, never inflated from XML. -->
+    <issue id="ViewConstructor" severity="ignore" />
+    <!-- setText() calls show readouts computed by the kernel, not translatable prose. -->
+    <issue id="SetTextI18n" severity="ignore" />
+    <!-- aapt2 versions <adaptive-icon> to -v26 and needs the qualified folder even at minSdk 26. -->
+    <issue id="ObsoleteSdkInt">
+        <ignore path="res/mipmap-anydpi-v26" />
+    </issue>
+</lint>

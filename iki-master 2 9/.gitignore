@@ -1,0 +1,84 @@
+# Rust / Cargo: all compiled output (every target triple, target/android,
+# target/plugin, …) lives here.
+/target
+# Release artifacts from scripts/build-*.sh (apk, .app, plugin archives).
+/dist
+
+# Android: scripts/build-android.sh keeps all output in target/android; these
+# only appear when Gradle is run by hand or from an IDE.
+/crates/iki-android/.gradle
+/crates/iki-android/.kotlin
+/crates/iki-android/build
+/crates/iki-android/local.properties
+# Pre-restructure Android project layout (android/ at the repo root).
+/android/.gradle
+/android/build
+/android/app/build
+/android/local.properties
+# Gradle / Android anywhere else.
+.gradle/
+.kotlin/
+.cxx/
+.externalNativeBuild/
+captures/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+*.so.sym
+native-debug-symbols.zip
+
+# macOS: app and plugin bundles, disk images, debug symbols, SDK downloads.
+*.app/
+*.dSYM/
+*.vst3/
+*.clap/
+*.component/
+*.dmg
+*.pkg
+*.dylib
+MacOSX*.sdk/
+MacOSX*.sdk.tar.xz
+.DS_Store
+
+# Windows: binaries, plugin files and debug symbols.
+*.exe
+*.dll
+*.pdb
+*.lib
+*.msi
+*.vst3
+*.clap
+Thumbs.db
+desktop.ini
+
+# Linux: shared objects and packages.
+*.so
+*.a
+*.AppImage
+*.deb
+*.rpm
+*.flatpak
+
+# Archives (release bundles, source snapshots such as iki-rs.zip).
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.tar.xz
+*.7z
+
+# Editors / IDEs.
+.idea/
+*.iml
+.vscode/
+target/
+tools/offline-check/target/
+tools/offline-check/Cargo.lock
+tools/offline-check/shim/tests/engine.rs
+
+# iOS (generated)
+ios/Iki.xcodeproj/
+ios/Iki/Info.plist
+target/ios/
